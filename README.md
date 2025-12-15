@@ -1,353 +1,140 @@
-# Proyecto Django - Lufkebike 🚴
+# Lufkebike
 
-Proyecto básico de Django para gestionar un catálogo de bicicletas.
+Lufkebike es una plataforma de e-commerce especializada en la venta de bicicletas, desarrollada con Django. Ofrece un catálogo completo de bicicletas, sistema de carrito de compras, reseñas de usuarios, gestión de eventos y un panel de administración para gestionar el inventario.
 
-## Requisitos previos
+## Características
+
+- **Catálogo de Bicicletas**: Explora una amplia variedad de bicicletas por marca, modelo, tipo y precio.
+- **Carrito de Compras**: Agrega productos al carrito, gestiona cantidades y realiza pedidos.
+- **Sistema de Reseñas**: Los usuarios pueden dejar reseñas y calificaciones en las bicicletas.
+- **Gestión de Eventos**: Inscríbete y administra eventos relacionados con ciclismo.
+- **Autenticación de Usuarios**: Registro, login y perfiles de usuario.
+- **Panel de Administración**: Interfaz para gestionar bicicletas, órdenes, clientes y eventos.
+- **Interfaz Responsiva**: Diseño moderno y profesional con Bootstrap.
+
+## Tecnologías Utilizadas
+
+- **Backend**: Django 5.2.7
+- **Base de Datos**: MySQL
+- **Frontend**: HTML5, CSS3, Bootstrap 5.3.2
+- **Lenguaje**: Python 3.13
+- **Servidor**: Gunicorn (producción), WhiteNoise (estáticos)
+- **Otros**: Pillow (imágenes), MySQLClient
+
+## Requisitos Previos
 
 - Python 3.8 o superior
-- pip (gestor de paquetes de Python)
 - MySQL Server instalado y en ejecución
-- Cliente MySQL (MySQL Workbench o línea de comandos)
+- Git
 
-## Pasos para crear el proyecto desde cero
+## Instalación
 
-### 1. **Crear un entorno virtual**
-```powershell
-virtualenv venv
-o
-python -m venv venv
-```
-
-### 2. **Activar el entorno virtual**
-```powershell
-.\venv\Scripts\Activate
-```
-
-### 3. **Instalar Django y mysqlclient**
-```powershell
-pip install django mysqlclient
-```
-
-### 4. **Crear la base de datos en MySQL**
-Conectarse a MySQL y ejecutar:
-```sql
-CREATE DATABASE Lufkebike;
-```
-
-### 5. **Crear el proyecto Django**
-```powershell
-django-admin startproject Lufkebike .
-```
-
-### 6. **Crear la aplicación**
-```powershell
-python manage.py startapp bicicletas
-```
-
-### 7. **Configurar la conexión a MySQL en settings.py**
-Editar `Lufkebike/settings.py` y reemplazar la configuración de `DATABASES`:
-```python
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Lufkebike',
-        'USER': 'root',          # Tu usuario de MySQL
-        'PASSWORD': 'tu_password',  # Tu contraseña de MySQL
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
-```
-
-### 8. **Registrar la aplicación en settings.py**
-Agregar la app en `INSTALLED_APPS` en `Lufkebike/settings.py`:
-```python
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'bicicletas',  # <- Agregar esta línea
-]
-```
-
-### 9. **Crear el modelo en models.py**
-Editar `bicicletas/models.py`:
-```python
-from django.db import models
-
-class Bicicleta(models.Model):
-    marca = models.CharField(max_length=50)
-    modelo = models.CharField(max_length=50)
-    tipo = models.CharField(max_length=20)  # mtb, ruta, enduro, trail, bmx
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
-    disponible = models.BooleanField(default=True)
-    anio = models.IntegerField()
-    
-    def __str__(self):
-        return f"{self.marca} {self.modelo}"
-```
-
-### 10. **Registrar el modelo en el admin**
-Editar `bicicletas/admin.py`:
-```python
-from django.contrib import admin
-from .models import Bicicleta
-
-@admin.register(Bicicleta)
-class BicicletaAdmin(admin.ModelAdmin):
-    list_display = ['marca', 'modelo', 'tipo', 'precio', 'disponible', 'anio']
-    list_filter = ['tipo', 'disponible']
-    search_fields = ['marca', 'modelo']
-```
-
-### 11. **Crear las migraciones**
-```powershell
-python manage.py makemigrations
-```
-
-### 12. **Aplicar las migraciones**
-```powershell
-python manage.py migrate
-```
-
-### 13. **Crear la vista para listar bicicletas**
-Editar `bicicletas/views.py`:
-```python
-from django.shortcuts import render
-from .models import Bicicleta
-
-def lista_bicicletas(request):
-    bicicletas = Bicicleta.objects.all()
-    return render(request, 'bicicletas/lista_bicicletas.html', {'bicicletas': bicicletas})
-```
-
-### 14. **Crear la estructura de templates**
-Crear el directorio `bicicletas/templates/bicicletas/` y dentro crear el archivo `lista_bicicletas.html`:
-```html
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lufkebike - Catálogo</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-            background: #f5f5f5;
-        }
-    </style>
-</head>
-<body>
-    <h1>Lufkebike - Catálogo de Bicicletas</h1>
-    
-    {% if bicicletas %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Marca</th>
-                    <th>Modelo</th>
-                    <th>Tipo</th>
-                    <th>Año</th>
-                    <th>Precio</th>
-                    <th>Disponibilidad</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for bici in bicicletas %}
-                <tr>
-                    <td>{{ bici.marca }}</td>
-                    <td>{{ bici.modelo }}</td>
-                    <td>{{ bici.tipo }}</td>
-                    <td>{{ bici.anio }}</td>
-                    <td>${{ bici.precio }}</td>
-                    <td>
-                        {% if bici.disponible %}
-                            <span class="disponible">Disponible</span>
-                        {% else %}
-                            <span class="no-disponible">No disponible</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <div class="no-bikes">
-            <p>No hay bicicletas en el catálogo.</p>
-        </div>
-    {% endif %}
-    
-    <div class="admin-link">
-        <a href="/admin/">Ir al Panel de Administración</a>
-    </div>
-</body>
-</html>
-```
-
-### 15. **Configurar las URLs de la aplicación**
-Crear el archivo `bicicletas/urls.py`:
-```python
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('', views.lista_bicicletas, name='lista_bicicletas'),
-]
-```
-
-### 16. **Configurar las URLs principales**
-Editar `Lufkebike/urls.py`:
-```python
-from django.contrib import admin
-from django.urls import path, include
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('bicicletas.urls')),
-]
-```
-
-### 17. **Crear un superusuario**
-```powershell
-python manage.py createsuperuser
-```
-Sigue las instrucciones en pantalla para crear tu usuario administrador.
-
-### 18. **Ejecutar el servidor**
-```powershell
-python manage.py runserver
-```
-
-### 19. **Acceder al proyecto**
-- **Catálogo de Bicicletas**: http://127.0.0.1:8000/
-- **Panel Admin**: http://127.0.0.1:8000/admin/
-
-## Estructura del proyecto
-
-```
-Lufkebike/
-├── venv/                    # Entorno virtual
-├── Lufkebike/                # Configuración del proyecto
-│   ├── __init__.py
-│   ├── settings.py         # Configuración principal
-│   ├── urls.py             # URLs principales
-│   ├── asgi.py
-│   └── wsgi.py
-├── bicicletas/             # Aplicación de bicicletas
-│   ├── migrations/         # Migraciones de la BD
-│   ├── templates/          # Plantillas HTML
-│   │   └── bicicletas/
-│   │       └── lista_bicicletas.html
-│   ├── __init__.py
-│   ├── admin.py           # Configuración del admin
-│   ├── apps.py
-│   ├── models.py          # Modelos de datos
-│   ├── tests.py
-│   ├── urls.py            # URLs de la app
-│   └── views.py           # Vistas
-└── manage.py              # Script de gestión
-```
-
-## Configuración de MySQL
-
-La base de datos utilizada es **MySQL**. Asegúrate de:
-
-1. Tener MySQL Server instalado y en ejecución
-2. Crear la base de datos `lufkebike`:
-   ```sql
-   CREATE DATABASE bikeshop;
-   ```
-3. Configurar las credenciales en `settings.py`:
-   ```python
-   DATABASES = {
-       'default': {
-           'ENGINE': 'django.db.backends.mysql',
-           'NAME': 'lufkebike',
-           'USER': 'root',
-           'PASSWORD': 'tu_password',
-           'HOST': 'localhost',
-           'PORT': '3306',
-       }
-   }
+1. **Clona el repositorio**:
+   ```bash
+   git clone https://github.com/tu-usuario/lufkebike.git
+   cd lufkebike
    ```
 
-## Modelo de datos: Bicicleta
+2. **Crea un entorno virtual**:
+   ```bash
+   python -m venv .venv
+   ```
 
-El modelo `Bicicleta` contiene los siguientes campos:
+3. **Activa el entorno virtual**:
+   - En Windows:
+     ```bash
+     .\.venv\Scripts\activate
+     ```
+   - En macOS/Linux:
+     ```bash
+     source .venv/bin/activate
+     ```
 
-- **marca**: Marca de la bicicleta (máx. 50 caracteres)
-- **modelo**: Modelo de la bicicleta (máx. 50 caracteres)
-- **tipo**: Tipo de bicicleta (mtb, ruta, enduro, trail, bmx) (máx. 20 caracteres)
-- **precio**: Precio con 2 decimales
-- **disponible**: Indica si está disponible para venta (por defecto: True)
-- **anio**: Año de fabricación
+4. **Instala las dependencias**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Vistas y Templates
+5. **Configura la base de datos**:
+   - Crea una base de datos en MySQL:
+     ```sql
+     CREATE DATABASE Lufkebike;
+     ```
+   - Edita `Lufkebike/settings.py` con tus credenciales de MySQL.
 
-### Vista de Lista de Bicicletas
+6. **Aplica las migraciones**:
+   ```bash
+   python manage.py migrate
+   ```
 
-La vista `lista_bicicletas` en `bicicletas/views.py` muestra todas las bicicletas del catálogo:
+7. **Crea un superusuario**:
+   ```bash
+   python manage.py createsuperuser
+   ```
 
-- **URL**: http://127.0.0.1:8000/
-- **Template**: `bicicletas/templates/bicicletas/lista_bicicletas.html`
-- **Características**:
-  - Diseño minimalista con tabla
-  - Estilos limpios y simples
-  - Información clara y organizada
-  - Indicadores de disponibilidad
-  - Enlace directo al panel de administración
+8. **Ejecuta el servidor**:
+   ```bash
+   python manage.py runserver
+   ```
 
-## Uso del panel de administración
+9. **Accede a la aplicación**:
+   - Sitio web: http://127.0.0.1:8000/
+   - Panel de administración: http://127.0.0.1:8000/admin/
 
-1. Accede a http://127.0.0.1:8000/admin/
-2. Ingresa con las credenciales del superusuario
-3. Administra las bicicletas: agregar, editar, eliminar
-4. Usa los filtros por tipo y disponibilidad
-5. Busca bicicletas por marca o modelo
-6. Las bicicletas agregadas aparecerán automáticamente en el catálogo principal
+## Uso
 
-## Comandos útiles
+### Para Usuarios
+- Regístrate o inicia sesión.
+- Explora el catálogo de bicicletas.
+- Agrega productos al carrito.
+- Deja reseñas en las bicicletas.
+- Inscríbete en eventos.
 
-```powershell
-# Activar entorno virtual
-.\venv\Scripts\Activate
+### Para Administradores
+- Accede al panel de admin para gestionar:
+  - Bicicletas (agregar, editar, eliminar).
+  - Órdenes y clientes.
+  - Eventos.
 
-# Crear nuevas migraciones
-python manage.py makemigrations
+## Estructura del Proyecto
 
-# Aplicar migraciones
-python manage.py migrate
-
-# Iniciar servidor de desarrollo
-python manage.py runserver
-
-# Crear superusuario adicional
-python manage.py createsuperuser
-
-# Acceder al shell de Django
-python manage.py shell
+```
+lufkebike/
+├── manage.py
+├── Lufkebike/              # Configuración del proyecto
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
+├── app_bicicletas/         # App de bicicletas
+├── app_carrito/            # App de carrito de compras
+├── app_clientes/           # App de autenticación y perfiles
+├── app_eventos/            # App de eventos
+├── app_ordenes/            # App de órdenes
+├── app_resenas/            # App de reseñas
+├── templates/              # Plantillas HTML
+├── static/                 # Archivos estáticos
+├── media/                  # Archivos multimedia
+├── logs/                   # Logs de la aplicación
+└── requirements.txt
 ```
 
-## Notas adicionales
+## Contribución
 
-- Este proyecto utiliza **MySQL** como base de datos
-- El servidor de desarrollo se ejecuta en http://127.0.0.1:8000/
-- No olvides activar el entorno virtual antes de trabajar en el proyecto
-- Asegúrate de que MySQL Server esté en ejecución antes de ejecutar migraciones
-- Si tienes problemas con `mysqlclient`, en Windows puedes intentar: `pip install mysqlclient` o usar `pymysql` como alternativa
-
-## Autor
-
-Talento Digital - Módulo 7
+1. Haz un fork del proyecto.
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`).
+3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`).
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`).
+5. Abre un Pull Request.
 
 ## Licencia
 
-Este proyecto es con fines educativos.
-#   L u f k e b i k e  
- 
+Este proyecto es de código abierto y está disponible bajo la Licencia MIT.
+
+## Autor
+
+Desarrollado como parte del curso de Talento Digital - Módulo 8. Omar Sepúlveda
+
+## Contacto
+
+Si tienes preguntas o sugerencias, abre un issue en GitHub.
