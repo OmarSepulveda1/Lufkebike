@@ -1,0 +1,80 @@
+[
+  {
+    "model": "app_bicicletas.bicicleta",
+    "pk": 1,
+    "fields": {
+      "marca": "Specialized",
+      "modelo": "Diverge E5",
+      "tipo": "mtb",
+      "precio": 1500000,
+      "disponible": true,
+      "anio": 2023,
+      "imagen": "bicicletas/95425-70_DIVERGE-E5-DUNEWHT-ASHGRY_HERO-PDP.webp"
+    }
+  },
+  {
+    "model": "app_bicicletas.bicicleta",
+    "pk": 2,
+    "fields": {
+      "marca": "Giant",
+      "modelo": "TCR Advanced 3",
+      "tipo": "ruta",
+      "precio": 2000000,
+      "disponible": true,
+      "anio": 2021,
+      "imagen": "bicicletas/giant-tcr-advanced-3-disc-blue-ashes-2021-801231-800x800.webp"
+    }
+  },
+  {
+    "model": "app_bicicletas.bicicleta",
+    "pk": 3,
+    "fields": {
+      "marca": "Trek",
+      "modelo": "Marlin 7",
+      "tipo": "mtb",
+      "precio": 1200000,
+      "disponible": true,
+      "anio": 2021,
+      "imagen": "bicicletas/marlin7.jpg"
+    }
+  },
+  {
+    "model": "app_bicicletas.bicicleta",
+    "pk": 4,
+    "fields": {
+      "marca": "Santa Cruz",
+      "modelo": "Levo Alloy",
+      "tipo": "enduro",
+      "precio": 3000000,
+      "disponible": true,
+      "anio": 2023,
+      "imagen": "bicicletas/95226-70_LEVO-ALLOY-G4-DPORG-DPLAKE_HERO-PDP.webp"
+    }
+  },
+  {
+    "model": "app_bicicletas.bicicleta",
+    "pk": 5,
+    "fields": {
+      "marca": "Specialized",
+      "modelo": "Status 170",
+      "tipo": "trail",
+      "precio": 2500000,
+      "disponible": true,
+      "anio": 2023,
+      "imagen": "bicicletas/93723-75_STATUS-170-2-BASE-OBSD-DUNEWHT_HERO-PDP.webp"
+    }
+  },
+  {
+    "model": "app_bicicletas.bicicleta",
+    "pk": 6,
+    "fields": {
+      "marca": "Specialized",
+      "modelo": "SJ",
+      "tipo": "bmx",
+      "precio": 1800000,
+      "disponible": true,
+      "anio": 2023,
+      "imagen": "bicicletas/93323-00_SJ-SW-BLKPRL-BRSHBLKCP_HERO.webp"
+    }
+  }
+]
